@@ -1,6 +1,7 @@
 "use server";
 
 import { auth, db } from "@/firebase/admin";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { error } from "console";
 import { cookies } from "next/headers";
 
@@ -50,6 +51,7 @@ export async function signUp(params: SignUpParams) {
       success: true,
       message: "Account Created Successfully. Please Sign In.",
     };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (e : any) {
     console.error("Error Creating User", e);
 
