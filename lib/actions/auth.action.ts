@@ -1,8 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server";
 
 import { auth, db } from "@/firebase/admin";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { error } from "console";
 import { cookies } from "next/headers";
 
 // Session duration (1 week)
@@ -36,7 +36,7 @@ export async function signUp(params: SignUpParams) {
     if (userRecord.exists)
       return {
         success: false,
-        message: "User Already Exists. Please Sign In.",
+        message: "User already exists. Please sign in.",
       };
 
     // save user to db
@@ -49,23 +49,22 @@ export async function signUp(params: SignUpParams) {
 
     return {
       success: true,
-      message: "Account Created Successfully. Please Sign In.",
+      message: "Account created successfully. Please sign in.",
     };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (e : any) {
-    console.error("Error Creating User", e);
+  } catch (error: any) {
+    console.error("Error creating user:", error);
 
     // Handle Firebase specific errors
-    if (e.code === "auth/email-already-exists") {
+    if (error.code === "auth/email-already-exists") {
       return {
         success: false,
-        message: "This Email Is Already In Use",
+        message: "This email is already in use",
       };
     }
 
     return {
       success: false,
-      message: "Failed To Create Account. Please Try Again.",
+      message: "Failed to create account. Please try again.",
     };
   }
 }
@@ -78,16 +77,16 @@ export async function signIn(params: SignInParams) {
     if (!userRecord)
       return {
         success: false,
-        message: "User Not Exits. Create An Account.",
+        message: "User does not exist. Create an account.",
       };
 
     await setSessionCookie(idToken);
-  } catch (e) {
-    console.log(e);
+  } catch (error: any) {
+    console.log("");
 
     return {
       success: false,
-      message: "Failed To Log In. Please Try Again.",
+      message: "Failed to log into account. Please try again.",
     };
   }
 }
@@ -133,27 +132,3 @@ export async function isAuthenticated() {
   const user = await getCurrentUser();
   return !!user;
 }
-
-export async function getInterviewsByUserId(userId: string):Promise<Interview[] | null> {
- const interviews = await db.collection("interviews").where("userId", "==", userId).orderBy("createdAt", "desc").get();
-  return interviews.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as Interview[];
-}
-
-export async function getLatestInterviews(params: GetLatestInterviewsParams):Promise<Interview[] | null> {
-  const {userId, limit = 20} = params;
-  
-  const interviews = await db
-  .collection("interviews")
-  .orderBy("createdAt", "desc")
-  .where("finalized", "==", true)
-  .where("userId", "!=", userId)
-  .limit(limit)
-  .get();
-   return interviews.docs.map((doc) => ({
-     id: doc.id,
-     ...doc.data(),
-   })) as Interview[];
- }

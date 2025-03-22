@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import Link from "next/link";
 import Image from "next/image";
 
@@ -13,31 +14,31 @@ import {
 async function Home() {
   const user = await getCurrentUser();
 
-  const [userInterviews, latestInterview] = await Promise.all([
+  const [userInterviews, allInterview] = await Promise.all([
     getInterviewsByUserId(user?.id!),
     getLatestInterviews({ userId: user?.id! }),
   ]);
 
   const hasPastInterviews = userInterviews?.length! > 0;
-  const hasUpcomingInterviews = latestInterview?.length! > 0;
+  const hasUpcomingInterviews = allInterview?.length! > 0;
 
   return (
     <>
       <section className="card-cta">
         <div className="flex flex-col gap-6 max-w-lg">
-          <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
+          <h2>Get Interview-Ready With AI-Powered Practice & Feedback</h2>
           <p className="text-lg">
-            Practice real interview questions & get instant feedback
+            Practice Real Interview Questions & Get Instant Feedback
           </p>
 
           <Button asChild className="btn-primary max-sm:w-full">
-            <Link href="/interview">Start an Interview</Link>
+            <Link href="/interview">Get Started</Link>
           </Button>
         </div>
 
         <Image
           src="/robot.png"
-          alt="robo-dude"
+          alt="robot"
           width={400}
           height={400}
           className="max-sm:hidden"
@@ -61,7 +62,7 @@ async function Home() {
               />
             ))
           ) : (
-            <p>You haven&apos;t taken any interviews yet</p>
+            <p>You Haven&apos;t Taken Any Interviews Yet</p>
           )}
         </div>
       </section>
@@ -71,7 +72,7 @@ async function Home() {
 
         <div className="interviews-section">
           {hasUpcomingInterviews ? (
-            latestInterview?.map((interview) => (
+            allInterview?.map((interview) => (
               <InterviewCard
                 key={interview.id}
                 userId={user?.id}
@@ -83,7 +84,7 @@ async function Home() {
               />
             ))
           ) : (
-            <p>No New Interviews Available</p>
+            <p> No Interviews Available</p>
           )}
         </div>
       </section>
